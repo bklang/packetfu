@@ -186,8 +186,6 @@ module PacketFu
 		# a hand-crafted payload that is identical to what would have been created
 		# by using an application layer packet)
 		def ==(other)
-			return false unless other.kind_of? self.class
-			return false unless other.respond_to? :to_s
 			self.to_s == other.to_s
 		end
 
