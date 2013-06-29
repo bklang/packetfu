@@ -33,7 +33,7 @@ module PacketFu
 		#
 		# It is no longer neccisary to manually add packet types here.
 		def self.parse(packet=nil,args={})
-			parse_app = true if(args[:parse_app].nil? or args[:parse_app])
+			parse_app = args.has_key?(:parse_app) ? args[:parse_app] : true
 			force_binary(packet)
 			if parse_app
 				classes = PacketFu.packet_classes.select {|pclass| pclass.can_parse? packet}
