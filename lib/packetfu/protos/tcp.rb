@@ -37,9 +37,7 @@ module PacketFu
 	#    TODO: Set up particular types of packets (syn, psh_ack, rst, etc). This can change the initial flavor.
 	#  :config
 	#   A hash of return address details, often the output of Utils.whoami?
-	class TCPPacket < Packet
-    include ::PacketFu::EthHeaderMixin
-    include ::PacketFu::IPHeaderMixin
+	class TCPPacket
     include ::PacketFu::TCPHeaderMixin
 
 		attr_accessor :eth_header, :ip_header, :tcp_header
@@ -54,29 +52,24 @@ module PacketFu
 
 		def read(str=nil, args={})
 			raise "Cannot parse `#{str}'" unless self.class.can_parse?(str)
-			@eth_header.read(str)
 
 			# Strip off any extra data, if we are asked to do so.
 			if args[:strip]
 				tcp_body_len = self.ip_len - self.ip_hlen - (self.tcp_hlen * 4)
 				@tcp_header.body.read(@tcp_header.body.to_s[0,tcp_body_len])
 			end
-			super(args)
+			super
 			self
 		end
 
 		def initialize(args={})
-			@eth_header = 	(args[:eth] || EthHeader.new)
-			@ip_header 	= 	(args[:ip]	|| IPHeader.new)
-			@tcp_header = 	(args[:tcp] || TCPHeader.new)
+			@tcp_header =	(args[:tcp] || TCPHeader.new)
 			@tcp_header.flavor = args[:flavor].to_s.downcase
 
-			@ip_header.body = @tcp_header
-			@eth_header.body = @ip_header
-			@headers = [@eth_header, @ip_header, @tcp_header]
-
-			@ip_header.ip_proto=0x06
 			super
+			@ip_header.ip_proto=0x06
+			@ip_header.body = @tcp_header
+			@headers  << @tcp_header
 			if args[:flavor]
 				tcp_calc_flavor(@tcp_header.flavor)
 			else

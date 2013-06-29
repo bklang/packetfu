@@ -141,17 +141,15 @@ module PacketFu
 	#
 	#  EthMac  :eth_dst                     # See EthMac
 	#  EthMac  :eth_src                     # See EthMac
-	#  Int16   :eth_proto, Default: 0x8000  # IP 0x0800, Arp 0x0806
-	#  String  :body
-	class EthHeader < Struct.new(:eth_dst, :eth_src, :eth_proto, :body)
+	#  Int16   :ethertype, Default: 0x8000  # IP 0x0800, Arp 0x0806
+	class EthHeader < Struct.new(:eth_dst, :eth_src, :ethertype)
 		include StructFu
 
 		def initialize(args={})
 			super(
 				EthMac.new.read(args[:eth_dst]),
 				EthMac.new.read(args[:eth_src]),
-				Int16.new(args[:eth_proto] || 0x0800),
-				StructFu::String.new.read(args[:body])
+				Int16.new(args[:ethertype] || 0x0800)
 			)
 		end
 
@@ -164,9 +162,9 @@ module PacketFu
 		# Getter for the Ethernet source address.
 		def eth_src; self[:eth_src].to_s; end
 		# Setter for the Ethernet protocol number.
-		def eth_proto=(i); typecast(i); end
+		def ethertype=(i); typecast(i); end
 		# Getter for the Ethernet protocol number.
-		def eth_proto; self[:eth_proto].to_i; end
+		def ethertype; self[:ethertype].to_i; end
 
 		# Returns the object in string form.
 		def to_s
@@ -179,8 +177,7 @@ module PacketFu
 			return self if str.nil?
 			self[:eth_dst].read str[0,6]
 			self[:eth_src].read str[6,6]
-			self[:eth_proto].read str[12,2]
-			self[:body].read str[14,str.size]
+			self[:ethertype].read str[12,2]
 			self
 		end
 
@@ -239,8 +236,8 @@ module PacketFu
 		alias :eth_dst_readable :eth_daddr
 		alias :eth_src_readable :eth_saddr
 
-		def eth_proto_readable
-			"0x%04x" % eth_proto
+		def ethertype_readable
+			"0x%04x" % ethertype
 		end
 
 	end

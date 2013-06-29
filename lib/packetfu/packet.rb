@@ -395,19 +395,6 @@ module PacketFu
 
 		alias :orig_kind_of? :kind_of?
 
-		def kind_of?(klass)
-			return true if orig_kind_of? klass
-			packet_types = proto.map {|p| PacketFu.const_get("#{p}Packet")}
-			match = false
-			packet_types.each do |p|
-				if p.ancestors.include? klass
-					match =  true
-					break
-				end
-			end
-			return match
-		end
-
 		# For packets, inspect is overloaded as inspect_hex(0).
 		# Not sure if this is a great idea yet, but it sure makes
 		# the irb output more sane.
@@ -453,6 +440,7 @@ module PacketFu
 		# abstract class that real packet types inherit from. Sadly, this
 		# makes the Packet class more difficult to test directly.
 		def initialize(args={})
+      @headers = []
 			if self.class.name =~ /(::|^)PacketFu::Packet$/
 				raise NoMethodError, "method `new' called for abstract class #{self.class.name}"
 			end

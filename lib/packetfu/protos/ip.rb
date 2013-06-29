@@ -33,8 +33,7 @@ module PacketFu
 	#     certainly known starting TTLs.
 	#   :config
 	#     A hash of return address details, often the output of Utils.whoami?
-	class IPPacket < Packet
-    include ::PacketFu::EthHeaderMixin
+	class IPv4
     include ::PacketFu::IPHeaderMixin
 
 		attr_accessor :eth_header, :ip_header
@@ -54,21 +53,22 @@ module PacketFu
 			end
 		end
 
+    def self.read(str=nil, args={})
+      new.read str, args
+    end
+
 		def read(str=nil, args={})
 			raise "Cannot parse `#{str}'" unless self.class.can_parse?(str)
-			@eth_header.read(str)
-			super(args) 
+			super
 			self
 		end
 
 		# Creates a new IPPacket object. 
 		def initialize(args={})
-			@eth_header = EthHeader.new(args).read(args[:eth])
 			@ip_header = IPHeader.new(args).read(args[:ip])
-			@eth_header.body=@ip_header
-
-			@headers = [@eth_header, @ip_header]
 			super
+			@eth_header.body=@ip_header
+			@headers << @ip_header
 		end
 
 		# Peek provides summary data on packet contents.

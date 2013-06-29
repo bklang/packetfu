@@ -14,24 +14,38 @@ module PacketFu
 	#
 	#   eth_pkt.to_w('eth0') # Inject on the wire. (require root)
 	#
-	class	EthPacket < Packet
+	class	Ethernet < Packet
+    VALID_ETHERTYPES = {
+      0x0800 => IPv4,
+      0x0806 => ARP,
+      0x86dd => IPv6,
+      0x88cc => LLDP,
+    }.freeze
+
+    HEADER_LENGTH = 14
+
     include ::PacketFu::EthHeaderMixin
 
 		attr_accessor :eth_header
 
 		def self.can_parse?(str)
 			# XXX Temporary fix. Need to extend the EthHeader class to handle more.
-			valid_eth_types = [0x0800, 0x0806, 0x86dd, 0x88cc]
 			return false unless str.size >= 14
 			type = str[12,2].unpack("n").first rescue nil
-			return false unless valid_eth_types.include? type
+			return false unless VALID_ETHERTYPES.include? type
 			true
 		end
 
+    def self.read(str=nil,args={})
+      new.read str, args
+    end
+
 		def read(str=nil,args={})
+      # TODO: Let the parser raise this rather than checking manually
 			raise "Cannot parse `#{str}'" unless self.class.can_parse?(str)
-			@eth_header.read(str)
-			super(args)
+			@eth_header.read(str[0, HEADER_LENGTH])
+      @body = VALID_ETHERTYPES[@eth_header.ethertype].read str[14, str.length - HEADER_LENGTH]
+
 			return self
 		end
 
@@ -43,8 +57,8 @@ module PacketFu
 
 		def initialize(args={})
 			@eth_header = EthHeader.new(args).read(args[:eth])
-			@headers = [@eth_header]
 			super
+			@headers << @eth_header
 		end
 
 	end
