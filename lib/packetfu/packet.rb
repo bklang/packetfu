@@ -44,15 +44,6 @@ module PacketFu
 			parsed_packet = p.read(packet,args)
 		end
 
-		def handle_is_identity(ptype)
-			idx = PacketFu.packet_prefixes.index(ptype.to_s.downcase)
-			if idx
-				self.kind_of? PacketFu.packet_classes[idx]
-			else
-				raise NoMethodError, "Undefined method `is_#{ptype}?' for #{self.class}."
-			end
-		end
-
 		# Get the binary string of the entire packet.
 		def to_s
 			@headers[0].to_s
@@ -493,12 +484,9 @@ module PacketFu
 		def method_missing(sym, *args, &block)
 			case sym.to_s
 			when /^is_([a-zA-Z0-9]+)\?/
-				ptype = $1
-				if PacketFu.packet_prefixes.index(ptype)
-					self.send(:handle_is_identity, $1)
-				else
-					super
-				end
+        # If we got this far, we don't respond to #is_whatever?,
+        # so it must be false
+        return false
 			when /^([a-zA-Z0-9]+)_.+/
 				ptype = $1
 				if PacketFu.packet_prefixes.index(ptype)

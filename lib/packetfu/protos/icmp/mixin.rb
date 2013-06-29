@@ -12,6 +12,7 @@ module PacketFu
 		def icmp_calc_sum; self.icmp_header.icmp_calc_sum; end
 		def icmp_recalc(*v); self.icmp_header.icmp_recalc(*v); end
 		def icmp_sum_readable; self.icmp_header.icmp_sum_readable; end
+    def is_icmp?; true; end
 	end
 end
 

@@ -27,5 +27,6 @@ module PacketFu
 		def hsrp_password=(v); self.hsrp_header.hsrp_password= v; end
 		def hsrp_vip; self.hsrp_header.hsrp_vip; end
 		def hsrp_vip=(v); self.hsrp_header.hsrp_vip= v; end
+    def is_hsrp?; true; end
 	end
 end

@@ -51,5 +51,6 @@ module PacketFu
     def lldp_saddr_ip=(v); self.lldp_header.lldp_saddr_ip= v; end
     def lldp_saddr_ip; self.lldp_header.lldp_saddr_ip(); end
 
+    def is_lldp?; true; end
   end
 end

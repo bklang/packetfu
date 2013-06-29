@@ -39,5 +39,6 @@ module PacketFu
 		def ip_ttl=(v); self.ip_header.ip_ttl= v; end
 		def ip_v; self.ip_header.ip_v ; end
 		def ip_v=(v); self.ip_header.ip_v= v; end
+    def is_ip?; true; end
 	end
 end

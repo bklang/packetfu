@@ -16,5 +16,6 @@ module PacketFu
     def eth_src; self.eth_header.eth_src ; end
     def eth_src=(v); self.eth_header.eth_src= v; end
     def eth_src_readable; self.eth_header.eth_src_readable ; end
+    def is_eth?; true; end
   end
 end

@@ -34,5 +34,6 @@ module PacketFu
 		def arp_src_ip_readable; self.arp_header.arp_src_ip_readable; end
 		def arp_dst_ip_readable; self.arp_header.arp_dst_ip_readable; end
 		def arp_proto_readable; self.arp_header.arp_proto_readable; end
+    def is_arp?; true; end
 	end
 end

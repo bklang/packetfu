@@ -18,6 +18,7 @@ module PacketFu
     def udp_dport; self.udp_header.udp_dport; end
     def udp_dport=(v); self.udp_header.udp_dport= v; end
     def udp_sum_readable; self.udp_header.udp_sum_readable; end
+    def is_udp?; true; end
   end
 end
 

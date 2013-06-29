@@ -44,5 +44,6 @@ module PacketFu
 		def tcp_opts_readable; self.tcp_header.tcp_opts_readable; end
 		def tcp_flags; self.tcp_header.tcp_flags; end
 		def tcp_flags=(v); self.tcp_header.tcp_flags= v; end
+    def is_tcp?; true; end
 	end
 end

@@ -27,5 +27,6 @@ module PacketFu
 		def ipv6_daddr=(v); self.ipv6_header.ipv6_daddr= v; end
 		def ipv6_src_readable; self.ipv6_header.ipv6_src_readable; end
 		def ipv6_dst_readable; self.ipv6_header.ipv6_dst_readable; end
+    def is_ipv6; true; end
 	end
 end
